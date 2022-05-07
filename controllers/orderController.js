@@ -17,11 +17,9 @@ function handleInput(str = String) {
         {
             wallet += userMod[i];
         }
-
     return {wallet:{wallet}};
 }
-
-const handleLogin = async (req, res) => {
+const handleOrder = async (req, res) => {
     const {wallet} = handleInput(req.body);
 	console.log(wallet);
     const foundUser = await User.findOne(wallet).exec();
@@ -38,4 +36,4 @@ const handleLogin = async (req, res) => {
         console.log(req.body);
     }
 }
-module.exports = { handleLogin };
+module.exports = { handleOrder };

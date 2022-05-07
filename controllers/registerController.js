@@ -1,30 +1,41 @@
 const User = require('../model/User');
-const bcrypt = require('bcrypt');
 
-const handleNewUser = async (req, res) => {
-    const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
+function handleInput(str = String) {
+    console.log(JSON.stringify(str))
+    var userIn = Array.prototype.map.call(JSON.stringify(str), eachLetter => eachLetter);
+    var userMod = new Array();
 
-    // check for duplicate usernames in the db
-    const duplicate = await User.findOne({ username: user }).exec();
-    if (duplicate) return res.sendStatus(409); //Conflict 
+        for (let i = 0; i <userIn.length; i++)
+        {   
+            if (userIn[i] !== ('}') & userIn[i] !== ('{') & userIn[i] !== ('"') & userIn[i] !== ('\\') & userIn[i] !== (':'))
+            {
+                userMod.push(userIn[i]);
+            }
+        } 
+        var wallet = "";
+        for (let i = 6; i <userMod.length; i++)
+        {
+            wallet += userMod[i];
+        }
 
-    try {
-        //encrypt the password
-        const hashedPwd = await bcrypt.hash(pwd, 10);
-
-        //create and store the new user
-        const result = await User.create({
-            "username": user,
-            "password": hashedPwd
-        });
-
-        console.log(result);
-
-        res.status(201).json({ 'success': `New user ${user} created!` });
-    } catch (err) {
-        res.status(500).json({ 'message': err.message });
-    }
+    return {wallet:{wallet}};
 }
 
-module.exports = { handleNewUser };
+const handleLogin = async (req, res) => {
+    const {wallet} = handleInput(req.body);
+	console.log(wallet);
+    const foundUser = await User.findOne(wallet).exec();
+	console.log(foundUser);
+   if (!foundUser)  return res.sendStatus(401); //Unauthorized 
+    if(foundUser) {
+        const v =  Object.values(foundUser.username.toString()).filter(Boolean).toString();
+		console.log(v);
+        const result = await foundUser.save();
+        console.log(result);
+		console.log(v);
+		res.send(foundUser.username);
+    } else {
+        console.log(req.body);
+    }
+}
+module.exports = { handleLogin };

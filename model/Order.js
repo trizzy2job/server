@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-    username: {
+const orderSchema = new Schema({
+    address: {
         type: String,
         required: true
     },
-    email: {
+    name:{
         type: String,
+        require: true
+    },
+    delivered: {
+        type: Boolean,
         require: true
     },
     wallet: {

@@ -1,16 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-    username: {
+const submissionSchema = new Schema({
+    wallet: {
         type: String,
         required: true
     },
-    email: {
+    title: {
         type: String,
-        require: true
+        required: true
     },
-    wallet: {
+    ipfs: {
+        type: String,
+        required: true
+    },
+    royalty: {
+        type: String,
+        required: true
+    },
+    manufacturer: {
         type: String,
         required: true
     },
