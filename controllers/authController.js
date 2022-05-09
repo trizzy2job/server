@@ -33,7 +33,11 @@ const handleLogin = async (req, res) => {
         const result = await foundUser.save();
         console.log(result);
 		console.log(v);
-		res.send(foundUser.username);
+        const name = foundUser.username;
+        const email = foundUser.email;
+        const wallet = foundUser.wallet;
+        const arr = {name, email, wallet}
+		res.send(arr);
     } else {
         console.log(req.body);
     }

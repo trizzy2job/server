@@ -11,31 +11,58 @@ function handleInput(str = String) {
             {
                 userMod.push(userIn[i]);
             }
-        } 
+        }
+
+        var user = "";
+        for (let i = 0; i <userMod.indexOf(','); i++)
+        {
+            user += userMod[i];
+        }
+        userMod.splice(0,userMod.indexOf(',') +1)
+
+        var email = "";
+        for (let i = 0; i <userMod.indexOf(','); i++)
+        {
+            email += userMod[i];
+        }
+        userMod.splice(0,userMod.indexOf(',') +1)
         var wallet = "";
-        for (let i = 6; i <userMod.length; i++)
+        for (let i = 0; i <userMod.length; i++)
         {
             wallet += userMod[i];
         }
 
-    return {wallet:{wallet}};
+    return {user, email, wallet};
 }
 
-const handleLogin = async (req, res) => {
-    const {wallet} = handleInput(req.body);
-	console.log(wallet);
-    const foundUser = await User.findOne(wallet).exec();
-	console.log(foundUser);
-   if (!foundUser)  return res.sendStatus(401); //Unauthorized 
-    if(foundUser) {
-        const v =  Object.values(foundUser.username.toString()).filter(Boolean).toString();
-		console.log(v);
-        const result = await foundUser.save();
-        console.log(result);
-		console.log(v);
-		res.send(foundUser.username);
-    } else {
-        console.log(req.body);
+const handleRegister = async (req, res) => {
+    console.log(req.body);
+    const reformed = handleInput(req.body);
+    const {user, email, wallet} = reformed;
+    console.log(user);
+    console.log(email);
+    console.log(wallet);
+    //if (!user || !email || !wallet) return res.status(400).json({ 'message': 'Username, email and wallet are required.' });
+
+    // check for duplicate usernames in the db
+    const duplicate = await User.findOne({username: user }).exec();
+	const duplicate2 = await User.findOne({email}).exec();
+	const duplicate3 = await User.findOne({wallet}).exec();
+    if (duplicate) return res.sendStatus(409); //Conflict 
+	if (duplicate2) return res.sendStatus(410); //Conflict 
+	if (duplicate3) return res.sendStatus(411); //Conflict 
+    try {
+        //create and store the new user
+        const result = await User.create({
+            "username": user,
+            "email": email,
+			"wallet": wallet
+        });
+		
+        //console.log(result);
+        res.status(201).json({ 'success': `New user ${user} created!` });
+    } catch (err) {
+        res.status(500).json({ 'message': err.message });
     }
 }
-module.exports = { handleLogin };
+module.exports = { handleRegister };

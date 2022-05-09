@@ -22,7 +22,11 @@ const submissionSchema = new Schema({
         type: String,
         required: true
     },
+    date: {
+        type: Number,
+        required: true
+    },
     refreshToken: String
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Submissions', submissionSchema);

@@ -1,4 +1,5 @@
-const User = require('../model/User');
+const Submission = require('../model/Submission');
+const User = require('../model/Submission');
 
 function handleInput(str = String) {
     console.log(JSON.stringify(str))
@@ -11,31 +12,67 @@ function handleInput(str = String) {
             {
                 userMod.push(userIn[i]);
             }
-        } 
+        }
+
         var wallet = "";
-        for (let i = 6; i <userMod.length; i++)
+        for (let i = 0; i <userMod.indexOf(','); i++)
         {
             wallet += userMod[i];
         }
+        userMod.splice(0,userMod.indexOf(',') +1)
 
-    return {wallet:{wallet}};
+        var title = "";
+        for (let i = 0; i <userMod.indexOf(','); i++)
+        {
+            title += userMod[i];
+        }
+        userMod.splice(0,userMod.indexOf(',') +1)
+
+        var ipfs = "";
+        for (let i = 0; i <userMod.indexOf(','); i++)
+        {
+            ipfs += userMod[i];
+        }
+        userMod.splice(0,userMod.indexOf(',') +1)
+        var royalty = "";
+        for (let i = 0; i <userMod.indexOf(','); i++)
+        {
+            royalty += userMod[i];
+        }
+        userMod.splice(0,userMod.indexOf(',') +1)
+        var manufacturer = "";
+        for (let i = 0; i <userMod.length; i++)
+        {
+            manufacturer += userMod[i];
+        }
+    return {wallet, title, ipfs, royalty, manufacturer};
 }
 
 const handleSubmit = async (req, res) => {
-    const {wallet} = handleInput(req.body);
-	console.log(wallet);
-    const foundUser = await User.findOne(wallet).exec();
-	console.log(foundUser);
-   if (!foundUser)  return res.sendStatus(401); //Unauthorized 
-    if(foundUser) {
-        const v =  Object.values(foundUser.username.toString()).filter(Boolean).toString();
-		console.log(v);
-        const result = await foundUser.save();
+    console.log(req.body);
+    const reformed = handleInput(req.body);
+    const {wallet, title, ipfs, royalty, manufacturer} = reformed;
+    const date = new Date().getTime();
+    console.log(reformed);
+    // check for duplicate usernames in the db
+	const duplicate2 = await User.findOne({ipfs}).exec();
+	if (duplicate2) return res.sendStatus(410); //Conflict 
+    if (wallet === "undefined") return res.sendStatus(411);
+    try {
+        const result = await Submission.create({
+			"wallet": wallet,
+            "title": title,
+            "ipfs": ipfs,
+            "royalty": royalty,
+            "manufacturer": manufacturer,
+            "date": date,
+        });
+		
         console.log(result);
-		console.log(v);
-		res.send(foundUser.username);
-    } else {
-        console.log(req.body);
+        res.status(201).json({ 'success': `New user ${Submission} created!`, result });
+    } catch (err) {
+        res.status(500).json({ 'message': err.message });
     }
+    
 }
 module.exports = { handleSubmit };
