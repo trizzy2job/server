@@ -22,6 +22,10 @@ const submissionSchema = new Schema({
         type: String,
         required: true
     },
+    ipfsThumb: {
+        type: String,
+        required: true
+    },
     royalty: {
         type: String,
         required: true
@@ -31,6 +35,10 @@ const submissionSchema = new Schema({
         required: true
     },
     date: {
+        type: Number,
+        required: true
+    },
+    votes: {
         type: Number,
         required: true
     },

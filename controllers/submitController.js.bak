@@ -32,16 +32,10 @@ function handleInput(str = String) {
         }
         userMod.splice(0,userMod.indexOf('§') +1)
 
-        var ipfs= "";
+        var ipfs = "";
         for (let i = 0; i <userMod.indexOf('§'); i++)
         {
             ipfs += userMod[i];
-        }
-        userMod.splice(0,userMod.indexOf('§') +1)
-        var ipfsThumb = "";
-        for (let i = 0; i <userMod.indexOf('§'); i++)
-        {
-            ipfsThumb += userMod[i];
         }
         userMod.splice(0,userMod.indexOf('§') +1)
         var royalty = "";
@@ -55,12 +49,12 @@ function handleInput(str = String) {
         {
             manufacturer += userMod[i];
         }
-    return {wallet, title, description, ipfs, ipfsThumb, royalty, manufacturer};
+    return {wallet, title, description, ipfs, royalty, manufacturer};
 }
 const handleSubmit = async (req, res) => {
     const reformed = handleInput(req.body);
-    const {wallet, title, description, ipfs,ipfsThumb, royalty, manufacturer} = reformed;
-	console.log("parsed Input" + wallet + " " +  title + " " + description + " " + ipfs + " " + ipfsThumb + " " + royalty+ " " + manufacturer);
+    const {wallet, title, description, ipfs, royalty, manufacturer} = reformed;
+	console.log("parsed Input" + {wallet, title, description, ipfs, royalty, manufacturer});
     const artist = await User.findOne({wallet: wallet}).exec();
     const date = new Date().getTime();
     // check for duplicate usernames in the db
@@ -75,25 +69,20 @@ const handleSubmit = async (req, res) => {
         "title": title,
         "description": description,
         "ipfs": ipfs,
-        "ipfsThumb": ipfsThumb,
         "royalty": royalty,
         "manufacturer": manufacturer,
         "date": date,
         "votes": zero
     });
-    console.log("submission created")
             const foundUser = await User.findOne({wallet: wallet})
-            console.log("suser found")
-
-        const subsArr = foundUser.submissions;
-
-        console.log("subs Arr created")
-        var subsArr2 = subsArr;
-        subsArr2.push({title, description, ipfs, royalty, manufacturer, date, zero})
-        console.log(subsArr2);
-        const t = await User.updateOne({wallet:wallet},{ $set:{submissions: subsArr2}});
+        const subsArr = foundUser.submissions
+        console.log( "submissions before update ");
+        console.log(subsArr);
+        const temp = subsArr.concat({title, description, ipfs, royalty, manufacturer, date, votes}); 
         console.log("submissions updated");
-
+        console.log(temp);
+        const t = await User.updateOne({wallet:wallet},{ $set:{submissions:temp}});
+        console.log(t);
         /*
         let currSubmissions = await User.findOne({wallet:wallet}).submissions;
         currSubmissions.push(ipfs);

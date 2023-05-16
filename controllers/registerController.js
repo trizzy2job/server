@@ -56,7 +56,11 @@ const handleRegister = async (req, res) => {
         const result = await User.create({
             "username": user,
             "email": email,
-			"wallet": wallet
+			"wallet": wallet,
+            "votes": [],
+            "submissions": [],
+            "orders": [], 
+            "role": "member"
         });
 		
         //console.log(result);

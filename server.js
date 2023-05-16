@@ -31,9 +31,13 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // routes
 app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
+
 app.use('/auth', require('./routes/auth'));
 app.use('/submit', require('./routes/submit'));
 app.use('/submissions', require('./routes/submissions'));
+app.use('/ss', require('./routes/singleSubmission'));
+
+app.use('/vote', require('./routes/vote'));
 app.use('/order', require('./routes/order'));
 app.use('/orders', require('./routes/orders'));
 app.use(errorHandler);

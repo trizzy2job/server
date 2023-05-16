@@ -17,7 +17,6 @@ function handleInput(str = String) {
         {
             wallet += userMod[i];
         }
-
     return {wallet:{wallet}};
 }
 
@@ -27,18 +26,23 @@ const handleLogin = async (req, res) => {
     const foundUser = await User.findOne(wallet).exec();
 	console.log(foundUser);
    if (!foundUser)  return res.sendStatus(401); //Unauthorized 
-    if(foundUser) {
+    if(foundUser)
+    {
         const v =  Object.values(foundUser.username.toString()).filter(Boolean).toString();
 		console.log(v);
         const result = await foundUser.save();
         console.log(result);
-		console.log(v);
         const name = foundUser.username;
         const email = foundUser.email;
         const wallet = foundUser.wallet;
-        const arr = {name, email, wallet}
+        const submissions = foundUser.submissions;
+        const votes = foundUser.votes;
+        const orders = foundUser.orders;
+        const role = foundUser.role;
+        const arr = {name, email, wallet, orders, submissions, votes, role}
 		res.send(arr);
-    } else {
+    } else 
+    {
         console.log(req.body);
     }
 }

@@ -14,6 +14,22 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    votes: {
+        type: Array,
+        required: true
+    },
+    submissions: {
+        type: Array,
+        required: true
+    },
+    orders: {
+        type: Array,
+        required: true
+    },
+    role: {
+        type: String,
+        required: true
+    },
     refreshToken: String
 });
 

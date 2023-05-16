@@ -10,6 +10,10 @@ const orderSchema = new Schema({
         type: String,
         require: true
     },
+    dateOrdered:{
+        type: Number,
+        required: true
+    },
     delivered: {
         type: Boolean,
         require: true
